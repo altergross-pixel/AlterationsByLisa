@@ -11,8 +11,11 @@ export default async function DashboardPage() {
     .from('orders')
     .select(`
       *,
-      customers ( id, name, phone ),
-      order_items ( * )
+      customers (id, name, phone),
+      order_garments (
+        id, garment_type, garment_color, subtotal, sort_order,
+        garment_alterations (id)
+      )
     `)
     .order('created_at', { ascending: false })
 

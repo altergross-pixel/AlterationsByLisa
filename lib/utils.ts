@@ -27,10 +27,7 @@ export function formatDate(dateString: string | null): string {
 export function formatShortDate(dateString: string | null): string {
   if (!dateString) return '—'
   const date = new Date(dateString + 'T00:00:00')
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  })
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
 export function formatPhone(phone: string): string {
@@ -41,10 +38,30 @@ export function formatPhone(phone: string): string {
   return phone
 }
 
-export function orderTotal(items: { price: number; quantity: number }[]): number {
-  return items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+export function formatPriceRange(
+  price: number,
+  priceMax: number | null,
+  priceNote: string | null
+): string {
+  if (price === 0 && priceNote?.toLowerCase().includes('quote')) return 'Quote'
+  if (priceMax && priceMax > price) return `$${price}–$${priceMax}`
+  if (priceNote?.toLowerCase().includes('minimum')) return `$${price} min.`
+  return `$${price}`
 }
 
 export function balanceDue(subtotal: number, totalPaid: number): number {
   return Math.max(0, subtotal - totalPaid)
+}
+
+export function isFabricFee(name: string): boolean {
+  const n = name.toLowerCase()
+  return (
+    (n.includes('fabric') &&
+      (n.includes('fee') || n.includes('taken') || n.includes('add-on') || n.includes('addon'))) ||
+    n.includes('expensive fabric')
+  )
+}
+
+export function getPhotoPublicUrl(storagePath: string): string {
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/order-photos/${storagePath}`
 }
